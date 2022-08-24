@@ -12,3 +12,6 @@ Second part will demonstrate Huffman coding
 ## Second part
 
 Gettingw started.. (soon)
+
+#Concept
+workflow etc
