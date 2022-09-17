@@ -1,9 +1,8 @@
-#import section
 import math
-from matplotlib import pyplot as plt
 import numpy as np
 import scipy.fftpack as fft
 import wave
+import sounddevice as sd
 
 pi = math.pi
 
@@ -11,19 +10,19 @@ dtmf_1 = [697, 770, 852, 941]
 dtmf_2 = [1209, 1336, 1477]
 
 keys = {
-    '1': [dtmf_1[0], dtmf_2[0],
-    '2': [dtmf_1[0], dtmf_2[1],
-    '3': [dtmf_1[0], dtmf_2[0],
-    '4': [dtmf_1[0], dtmf_2[0],
-    '5': [dtmf_1[0], dtmf_2[0],
-    '6': [dtmf_1[0], dtmf_2[0],
-    '7': [dtmf_1[0], dtmf_2[0],
-    '8': [dtmf_1[0], dtmf_2[0],
-    '9': [dtmf_1[0], dtmf_2[0],
-    '*': [dtmf_1[0], dtmf_2[0],
-    '0': [dtmf_1[0], dtmf_2[0],
-    '#': [dtmf_1[0], dtmf_2[0],
-}
+    '1': [dtmf_1[0], dtmf_2[0]],
+    '2': [dtmf_1[0], dtmf_2[1]],
+    '3': [dtmf_1[0], dtmf_2[0]],
+    '4': [dtmf_1[0], dtmf_2[0]],
+    '5': [dtmf_1[0], dtmf_2[0]],
+    '6': [dtmf_1[0], dtmf_2[0]],
+    '7': [dtmf_1[0], dtmf_2[0]],
+    '8': [dtmf_1[0], dtmf_2[0]],
+    '9': [dtmf_1[0], dtmf_2[0]],
+    '*': [dtmf_1[0], dtmf_2[0]],
+    '0': [dtmf_1[0], dtmf_2[0]],
+    '#': [dtmf_1[0], dtmf_2[0]],
+        }
 
 def dsp_key2tones(key, tone_len, fs):
     f = keys[str(key)]
@@ -51,16 +50,25 @@ def dsp_encode_dtmf(keys_input, tone_len, zero_len, fs):
             dtmf_signal = np.append(dtmf_signal, key_pause)
     return dtmf_signal
 
-    tone_len = 0.3
-    zero_len = 0.1
-    fs = 22050
+tone_len = 3
+zero_len = 0.1
+fs = 44100
     
 #generate the DTMF signal
 key_input = '01205551234'
 #dtmf_signal = dsp_encode_dtmf(keys, tone_len, zero_len, fs)
 #play the DTMF signal
 dtmf_signal = dsp_encode_dtmf(key_input, tone_len, zero_len, fs)
-ipd.Audio(dtmf_signal, rate=fs)
+#sd.OutputStream(channels=1, callback=dtmf_signal, samplerate=fs)
+print(dtmf_signal)
+obj = wave.open('sound.wav','w')
+obj.setnchannels(1)
+obj.setsampwidth(2)
+obj.setframerate(fs)
+#obj.writeframesraw(dtmf_signal)
+obj.close()
+sd.play(dtmf_signal, fs)
+#ipd.Audio(dtmf_signal, rate=fs)
 
 """
 time = np.array(range(0, len(dtmf_signal)))
